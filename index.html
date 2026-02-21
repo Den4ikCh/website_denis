@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Сайт визитка</title>
+        <title>Сайт-визитка</title>
         <style>
             body {
                 font: Arial;
@@ -22,8 +22,6 @@
             }
 
             .email {
-                background-color: #007bff;
-                color: white;
                 padding: 10px;
                 border-radius: 5px;
                 margin-bottom: 20px;
@@ -37,7 +35,6 @@
             .main-photo {
                 max-width: 300px;
                 border-radius: 20px;
-                box-shadow: 0 5px 10px blueviolet;
             }
 
             .social-links {
@@ -53,30 +50,12 @@
                 flex-direction: column;
                 align-items: center;
                 text-decoration: none;
-                transition: transform 0.3s;
-            }
-
-            .social-icon:hover {
-                transform: scale(1.1);
             }
 
             .social-icon img {
                 width: 50px;
                 height: 50px;
                 object-fit: contain;
-            }
-
-            .social-label {
-                font-size: 12px;
-                color: white;
-                margin-top: 5px;
-            }
-
-            .contact-label {
-                font-size: 14px;
-                color: white;
-                margin-top: 5px;
-                text-align: center;
             }
         </style>
     </head>
@@ -88,24 +67,27 @@
             <img src="photo.jpg" alt="Денис Чуприков" class="main-photo">
         </div>
         <div>
-            <div>О себе:</div>
-            <div>Любимые игры:</div>
-            <ul>
-                <li>Valheim</li>
-                <li>Half-Life</li>
-                <li>Atomic Heart</li>
-                <li>Мир танков</li>
-            </ul>   
-
-            <div>Изучаю программирование:</div>
-            <ul>
-                <li>Java</li>
-                <li>C#</li>
-                <li>Python</li>
-                <li>C++</li>
-                <li>HTML</li>
-                <li>CSS</li>
-            </ul>   
+            <div>О себе:
+                <div>
+                    Привет! Меня зовут Денис, мне 18 лет, я из Воронежа. Я учусь в ВГУ на ФКН, 
+                    изучаю такие языки программирования, как:
+                    <div>
+                        <ul>
+                            <li>Java</li>
+                            <li>C#</li>
+                            <li>Python</li>
+                            <li>C++</li>
+                            <li>HTML</li>
+                            <li>CSS</li>
+                        </ul>   
+                    </div> 
+                    В свободное время я люблю играть в игры. Мне очень нравится серия игр 
+                    Half-Life, особенно Half-Life: Alyx, Atomic Heart, Valheim и Мир Танков.
+                    Я умею играть на балалайке и валять из шерсти. Когда я учился в школе,
+                    я участвовал в конкурсах и неоднократно получал грамоты, например Гран-При
+                    за игру на балалайке в ансамбле на конкурсе "Салют Талантов" в Санкт-Петербурге.
+                </div>
+            </div>
         </div>
         <div style="text-align: center; margin-bottom: 20px;">
             <div class="social-links">
