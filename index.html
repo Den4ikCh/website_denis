@@ -5,11 +5,12 @@
         <title>Сайт-визитка</title>
         <style>
             body {
-                font: Arial;
+                font-family: Arial, sans-serif;
                 max-width: 800px;
                 margin: 0 auto;
                 padding: 20px;
                 background-color: #f5f5f5;
+                transition: background-color 0.3s;
             }
 
             .title {
@@ -31,11 +32,33 @@
 
             .photo {
                 text-align: center;
+                position: relative;
             }
 
             .main-photo {
                 max-width: 300px;
                 border-radius: 20px;
+                transition: transform 0.3s, max-width 0.3s;
+                cursor: pointer;
+            }
+
+            .photo-controls {
+                text-align: center;
+                margin: 10px 0;
+            }
+
+            .photo-controls button {
+                padding: 5px 10px;
+                margin: 0 5px;
+                cursor: pointer;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+            }
+
+            .photo-controls button:hover {
+                background-color: #45a049;
             }
 
             .social-links {
@@ -51,6 +74,11 @@
                 flex-direction: column;
                 align-items: center;
                 text-decoration: none;
+                transition: transform 0.3s;
+            }
+
+            .social-icon:hover {
+                transform: scale(1.1);
             }
 
             .social-icon img {
@@ -58,22 +86,77 @@
                 height: 50px;
                 object-fit: contain;
             }
+
+            .view-counter {
+                text-align: center;
+                margin: 15px 0;
+                padding: 10px;
+                background-color: #e0e0e0;
+                border-radius: 8px;
+                font-size: 14px;
+                color: #333;
+            }
+
+            .clear-btn {
+                display: block;
+                margin: 10px auto;
+                padding: 8px 15px;
+                background-color: #ff4444;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            .clear-btn:hover {
+                background-color: #cc0000;
+            }
+
+            .theme-btn {
+                display: block;
+                margin: 10px auto;
+                padding: 8px 15px;
+                background-color: #2196F3;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            .theme-btn:hover {
+                background-color: #0b7dda;
+            }
+
+            .controls {
+                text-align: center;
+                margin-top: 20px;
+            }
         </style>
     </head>
 
     <body>
         <span class="title">Чуприков Денис Вадимович</span>
         <div class="email">chuprikov.denis.vrn@gmail.com</div>
+        
+        <div class="view-counter" id="viewCounter"></div>
+        
         <div class="photo">
-            <img src="photo.jpg" alt="Денис Чуприков" class="main-photo">
+            <img src="photo.jpg" alt="Денис Чуприков" class="main-photo" id="mainPhoto">
         </div>
+        
+        <div class="photo-controls">
+            <button id="zoomInBtn">+ Увеличить фото</button>
+            <button id="zoomOutBtn">- Уменьшить фото</button>
+            <button id="resetZoomBtn">Сбросить размер</button>
+        </div>
+        
         <div>
             <div>О себе:
                 <div>
                     Привет! Меня зовут Денис, мне 18 лет, я из Воронежа. Я учусь в ВГУ на ФКН, 
                     изучаю такие языки программирования, как:
                     <div>
-                        <ul>
+                        <ul id="langList">
                             <li>Java</li>
                             <li>C#</li>
                             <li>Python</li>
@@ -90,15 +173,168 @@
                 </div>
             </div>
         </div>
+        
+        <div class="controls">
+            <button id="themeBtn" class="theme-btn">Тёмная тема</button>
+            <button id="clearDataBtn" class="clear-btn">Сбросить все настройки</button>
+        </div>
+        
         <div style="text-align: center; margin-bottom: 20px;">
             <div class="social-links">
                 <a href="https://t.me/Den4ikCh" target="_blank" class="social-icon" title="Telegram">
-                    <img src="telegram.png">
+                    <img src="telegram.png" alt="Telegram">
                 </a>
                 <a href="https://vk.com/Den4ikCh" target="_blank" class="social-icon" title="ВКонтакте">
-                    <img src="vk.png">
+                    <img src="vk.png" alt="VK">
                 </a>
             </div>
         </div>
+
+        <script>
+            // Функция сохранения состояния в localStorage
+            function saveState() {
+                var photoSize = document.getElementById('mainPhoto').style.maxWidth;
+                var theme = document.body.style.backgroundColor;
+                var visitCount = parseInt(localStorage.getItem('visitCount') || '0');
+                
+                var state = {
+                    photoSize: photoSize || '300px',
+                    theme: theme || '',
+                    visitCount: visitCount,
+                    lastVisit: new Date().toLocaleString()
+                };
+                localStorage.setItem('siteState', JSON.stringify(state));
+            }
+            
+            // Функция загрузки состояния из localStorage
+            function loadState() {
+                var savedState = localStorage.getItem('siteState');
+                if (savedState) {
+                    try {
+                        var state = JSON.parse(savedState);
+                        
+                        // Восстановление размера фото
+                        if (state.photoSize && state.photoSize !== '') {
+                            document.getElementById('mainPhoto').style.maxWidth = state.photoSize;
+                        }
+                        
+                        // Восстановление темы
+                        if (state.theme && state.theme !== '') {
+                            document.body.style.backgroundColor = state.theme;
+                            if (state.theme === '#1e1e1e') {
+                                document.getElementById('themeBtn').textContent = 'Светлая тема';
+                                document.body.style.color = '#ffffff';
+                            } else {
+                                document.getElementById('themeBtn').textContent = 'Тёмная тема';
+                                document.body.style.color = '#000000';
+                            }
+                        }
+                        
+                        // Обновление счетчика посещений
+                        updateViewCounter();
+                    } catch(e) {
+                        console.log('Ошибка загрузки состояния');
+                    }
+                } else {
+                    updateViewCounter();
+                }
+            }
+            
+            // Обновление счетчика посещений
+            function updateViewCounter() {
+                var visitCount = localStorage.getItem('visitCount');
+                var lastVisit = localStorage.getItem('lastVisit');
+                
+                if (!visitCount) {
+                    visitCount = 1;
+                } else {
+                    visitCount = parseInt(visitCount) + 1;
+                }
+                
+                var now = new Date().toLocaleString();
+                localStorage.setItem('visitCount', visitCount);
+                localStorage.setItem('lastVisit', now);
+                
+                var counterHtml = '📊 Посещений страницы: ' + visitCount;
+                if (lastVisit) {
+                    counterHtml += ' | 🕐 Последний визит: ' + lastVisit;
+                }
+                document.getElementById('viewCounter').innerHTML = counterHtml;
+            }
+            
+            // Увеличение фото
+            function zoomIn() {
+                var photo = document.getElementById('mainPhoto');
+                var currentSize = parseInt(photo.style.maxWidth);
+                if (isNaN(currentSize)) currentSize = 300;
+                var newSize = Math.min(currentSize + 50, 600);
+                photo.style.maxWidth = newSize + 'px';
+                saveState();
+            }
+            
+            // Уменьшение фото
+            function zoomOut() {
+                var photo = document.getElementById('mainPhoto');
+                var currentSize = parseInt(photo.style.maxWidth);
+                if (isNaN(currentSize)) currentSize = 300;
+                var newSize = Math.max(currentSize - 50, 150);
+                photo.style.maxWidth = newSize + 'px';
+                saveState();
+            }
+            
+            // Сброс размера фото
+            function resetZoom() {
+                var photo = document.getElementById('mainPhoto');
+                photo.style.maxWidth = '300px';
+                saveState();
+            }
+            
+            // Переключение темы
+            function toggleTheme() {
+                var body = document.body;
+                var btn = document.getElementById('themeBtn');
+                
+                if (body.style.backgroundColor === 'rgb(30, 30, 30)' || body.style.backgroundColor === '#1e1e1e') {
+                    body.style.backgroundColor = '#f5f5f5';
+                    body.style.color = '#000000';
+                    btn.textContent = 'Тёмная тема';
+                } else {
+                    body.style.backgroundColor = '#1e1e1e';
+                    body.style.color = '#ffffff';
+                    btn.textContent = 'Светлая тема';
+                }
+                saveState();
+            }
+            
+            // Сброс всех настроек
+            function clearAllData() {
+                if (confirm('Вы уверены, что хотите сбросить все настройки? Счётчик посещений также будет сброшен.')) {
+                    localStorage.removeItem('siteState');
+                    localStorage.removeItem('visitCount');
+                    localStorage.removeItem('lastVisit');
+                    
+                    // Сброс визуальных настроек
+                    document.getElementById('mainPhoto').style.maxWidth = '300px';
+                    document.body.style.backgroundColor = '#f5f5f5';
+                    document.body.style.color = '#000000';
+                    document.getElementById('themeBtn').textContent = 'Тёмная тема';
+                    
+                    // Обновление счетчика
+                    updateViewCounter();
+                    
+                    alert('Все настройки сброшены!');
+                }
+            }
+            
+            // Инициализация обработчиков событий
+            document.getElementById('zoomInBtn').onclick = zoomIn;
+            document.getElementById('zoomOutBtn').onclick = zoomOut;
+            document.getElementById('resetZoomBtn').onclick = resetZoom;
+            document.getElementById('themeBtn').onclick = toggleTheme;
+            document.getElementById('clearDataBtn').onclick = clearAllData;
+            
+            // Загрузка сохраненного состояния при загрузке страницы
+            loadState();
+        </script>
     </body>
-</html> 
+</html>
